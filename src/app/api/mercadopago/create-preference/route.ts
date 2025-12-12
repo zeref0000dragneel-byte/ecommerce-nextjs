@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     // Crear items para MercadoPago
     const items = order.items.map((item) => ({
+      id: item.productId,
       title: item.product.name,
       quantity: item.quantity,
       unit_price: item.price,
