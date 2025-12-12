@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
