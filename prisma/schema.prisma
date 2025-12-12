@@ -1,0 +1,175 @@
+// ========================================
+// CONFIGURACIÓN INICIAL DE PRISMA
+// ========================================
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// MODELO 1: CATEGORÍAS
+// ========================================
+// Agrupa productos por tipo (Electrónica, Ropa, etc.)
+model Category {
+  id        String    @id @default(cuid()) // ID único generado automáticamente
+  name      String    @unique              // Nombre de la categoría (debe ser único)
+  slug      String    @unique              // URL amigable (ej: "electronica")
+  createdAt DateTime  @default(now())      // Fecha de creación automática
+  updatedAt DateTime  @updatedAt           // Fecha de actualización automática
+  
+  // RELACIÓN: Una categoría puede tener muchos productos
+  products  Product[]
+}
+
+// ========================================
+// MODELO 2: PRODUCTOS
+// ========================================
+// Los items que vendes en tu tienda
+model Product {
+  id          String      @id @default(cuid())
+  name        String                               // Nombre del producto
+  slug        String      @unique                  // URL amigable (ej: "laptop-hp")
+  description String?                              // Descripción (opcional)
+  price       Float                                // Precio (ej: 999.99)
+  comparePrice Float?                              // Precio anterior/comparación (opcional)
+  stock       Int         @default(0)              // Cantidad disponible
+  imageUrl    String?                              // URL de la imagen principal
+  isActive    Boolean     @default(true)           // Si está visible en la tienda
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // RELACIÓN CON CATEGORÍA
+  categoryId  String                               // ID de la categoría a la que pertenece
+  category    Category    @relation(fields: [categoryId], references: [id])
+  
+  // RELACIÓN: Un producto puede estar en muchos pedidos
+  orderItems  OrderItem[]
+  
+  // RELACIÓN: Un producto puede tener muchas variantes (✅ NUEVO)
+  variants    ProductVariant[]
+  
+  // ÍNDICE para búsquedas rápidas
+  @@index([categoryId])
+}
+
+// ========================================
+// MODELO 2.5: VARIANTES DE PRODUCTO (✅ NUEVO)
+// ========================================
+// Diferentes opciones del mismo producto (colores, tallas, etc.)
+model ProductVariant {
+  id          String      @id @default(cuid())
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Atributos de la variante
+  color       String?     // Ej: "Rojo", "Azul", "Verde"
+  size        String?     // Ej: "S", "M", "L", "XL"
+  sku         String?     @unique // Código único (ej: "VESTIDO-ROJO-M")
+  
+  // Precio y stock específico de esta variante
+  price       Float?      // Si es null, usa el precio del producto base
+  stock       Int         @default(0)
+  imageUrl    String?     // Imagen específica de esta variante
+  
+  isActive    Boolean     @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([productId])
+  @@index([sku])
+}
+
+// ========================================
+// MODELO 3: CLIENTES
+// ========================================
+// Personas que compran en tu tienda
+model Customer {
+  id        String   @id @default(cuid())
+  name      String                              // Nombre completo
+  email     String   @unique                    // Email único
+  phone     String?                             // Teléfono (opcional)
+  address   String?                             // Dirección (opcional)
+  city      String?                             // Ciudad (opcional)
+  state     String?                             // Estado/Provincia (opcional)
+  zipCode   String?                             // Código postal (opcional)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // RELACIÓN: Un cliente puede tener muchos pedidos
+  orders    Order[]
+}
+
+// ========================================
+// MODELO 4: PEDIDOS/ÓRDENES
+// ========================================
+// Cada compra que se realiza
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique                // Número de orden único (ej: "ORD-001")
+  total           Float                              // Total a pagar
+  status          OrderStatus @default(PENDING)     // Estado del pedido
+  paymentMethod   String?                            // Método de pago usado
+  paymentId       String?                            // ID de pago de MercadoPago (para después)
+  shippingAddress String?                            // Dirección de envío
+  mercadoPagoId   String?                            // ID de preferencia de MP                        
+  notes           String?                            // Notas adicionales
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // RELACIÓN CON CLIENTE
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  
+  // RELACIÓN: Un pedido tiene muchos items
+  items           OrderItem[]
+  
+  // ÍNDICES para búsquedas rápidas
+  @@index([customerId])
+  @@index([orderNumber])
+}
+
+// ========================================
+// MODELO 5: ITEMS DEL PEDIDO
+// ========================================
+// Cada producto dentro de un pedido
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int                                // Cantidad comprada
+  price     Float                              // Precio al momento de la compra (se guarda por si cambia después)
+  createdAt DateTime @default(now())
+  
+  // RELACIÓN CON PEDIDO
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // RELACIÓN CON PRODUCTO
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  
+  // RELACIÓN CON VARIANTE (✅ NUEVO - opcional)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  
+  // ÍNDICES
+  @@index([orderId])
+  @@index([productId])
+  @@index([variantId])
+}
+
+// ========================================
+// ENUMERACIÓN: ESTADOS DE PEDIDO
+// ========================================
+// Define los estados posibles de un pedido
+enum OrderStatus {
+  PENDING    // Pendiente de pago
+  PAID       // Pagado
+  PROCESSING // En proceso
+  SHIPPED    // Enviado
+  DELIVERED  // Entregado
+  CANCELLED  // Cancelado
+}
