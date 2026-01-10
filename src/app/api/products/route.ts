@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/app/lib/prisma'; // ✅ CORRECTO: Usar singleton
 
 // GET /api/products - Listar todos los productos
 export async function GET(request: Request) {
@@ -13,7 +11,7 @@ export async function GET(request: Request) {
       where: categoryId ? { categoryId } : {},
       include: {
         category: true,
-        variants: {  // ✅ NUEVO: Incluir variantes
+        variants: {
           where: { isActive: true },
           orderBy: { createdAt: 'asc' },
         },
@@ -72,7 +70,7 @@ export async function POST(request: Request) {
       },
       include: {
         category: true,
-        variants: true, // ✅ NUEVO: Incluir variantes en respuesta
+        variants: true,
       },
     });
 
