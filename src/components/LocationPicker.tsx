@@ -199,7 +199,14 @@ export default function LocationPicker({
       },
       (error) => {
         setIsLoading(false);
-        console.error("Error de geolocalización (raw):", error);
+        
+        // ✅ LOGGING MEJORADO - Ahora verás el código de error real
+        console.error("Error de geolocalización:");
+        console.error("- Código:", error.code);
+        console.error("- Mensaje:", error.message);
+        console.error("- PERMISSION_DENIED (1):", error.code === 1);
+        console.error("- POSITION_UNAVAILABLE (2):", error.code === 2);
+        console.error("- TIMEOUT (3):", error.code === 3);
   
         const message = parseGeolocationError(error);
   
@@ -210,7 +217,6 @@ export default function LocationPicker({
       options
     );
   };
-  
 
   const handleClear = () => {
     setAddress("");
