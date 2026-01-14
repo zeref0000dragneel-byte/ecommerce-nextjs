@@ -3,6 +3,32 @@
 import { useState, useRef, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
 
+function parseGeolocationError(error: unknown): string {
+  if (!error || typeof error !== "object") {
+    return "No se pudo obtener tu ubicación."
+  }
+
+  const anyError = error as any
+
+  if (typeof anyError.code === "number") {
+    switch (anyError.code) {
+      case 1:
+        return "Permiso de ubicación denegado."
+      case 2:
+        return "Ubicación no disponible."
+      case 3:
+        return "Tiempo de espera agotado."
+    }
+  }
+
+  if (typeof anyError.message === "string") {
+    return anyError.message
+  }
+
+  return "No se pudo obtener tu ubicación. Revisa los permisos del navegador."
+}
+
+
 interface LocationPickerProps {
   onLocationSelect: (location: {
     address: string;
@@ -103,25 +129,23 @@ export default function LocationPicker({
       alert("❌ Tu navegador no soporta geolocalización. Por favor, escribe tu dirección manualmente.");
       return;
     }
-
+  
     setIsLoading(true);
-
-    // Opciones para geolocalización
+  
     const options = {
       enableHighAccuracy: true,
-      timeout: 10000, // 10 segundos
-      maximumAge: 0, // No usar caché
+      timeout: 10000,
+      maximumAge: 0,
     };
-
+  
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-
+  
         try {
           const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-          
+  
           if (!apiKey) {
-            // Si no hay API key, usar la ubicación directamente sin geocoding
             const manualAddress = `Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
             setAddress(manualAddress);
             setCoordinates({ lat: latitude, lng: longitude });
@@ -131,22 +155,21 @@ export default function LocationPicker({
               lng: longitude,
             });
             setIsLoading(false);
-            alert("✅ Ubicación obtenida. Por favor, completa la dirección manualmente en el campo de texto.");
+            alert("✅ Ubicación obtenida. Completa la dirección manualmente.");
             return;
           }
-
-          // Usar Geocoding API para obtener la dirección
+  
           const response = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}&language=es`
           );
-          
+  
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error ${response.status}`);
           }
-
+  
           const data = await response.json();
-
-          if (data.status === 'OK' && data.results && data.results.length > 0) {
+  
+          if (data.status === "OK" && data.results?.length > 0) {
             const formattedAddress = data.results[0].formatted_address;
             setAddress(formattedAddress);
             setCoordinates({ lat: latitude, lng: longitude });
@@ -156,14 +179,11 @@ export default function LocationPicker({
               lng: longitude,
             });
             setIsOpen(false);
-          } else if (data.status === 'ZERO_RESULTS') {
-            alert("⚠️ No se encontró una dirección para esta ubicación. Por favor, escríbela manualmente.");
           } else {
             throw new Error(`Geocoding error: ${data.status}`);
           }
-        } catch (error: any) {
+        } catch (error) {
           console.error("Error al obtener dirección:", error);
-          // Intentar usar coordenadas directamente
           const manualAddress = `Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
           setAddress(manualAddress);
           setCoordinates({ lat: latitude, lng: longitude });
@@ -172,38 +192,25 @@ export default function LocationPicker({
             lat: latitude,
             lng: longitude,
           });
-          alert("⚠️ Se obtuvo tu ubicación pero no se pudo convertir a dirección. Por favor, completa la dirección manualmente.");
+          alert("⚠️ Se obtuvo tu ubicación, pero no la dirección. Complétala manualmente.");
         } finally {
           setIsLoading(false);
         }
       },
       (error) => {
         setIsLoading(false);
-        let errorMessage = "No se pudo obtener tu ubicación. ";
-        
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage += "❌ Permiso denegado. Por favor, permite el acceso a tu ubicación en la configuración del navegador y vuelve a intentar.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage += "⚠️ La información de ubicación no está disponible.";
-            break;
-          case error.TIMEOUT:
-            errorMessage += "⏱️ La solicitud de ubicación expiró. Intenta de nuevo.";
-            break;
-          default:
-            errorMessage += "❌ Error desconocido.";
-            break;
-        }
-        
-        errorMessage += "\n\n💡 Puedes escribir tu dirección manualmente en el campo de texto.";
-        
-        alert(errorMessage);
-        console.error("Error de geolocalización:", error);
+        console.error("Error de geolocalización (raw):", error);
+  
+        const message = parseGeolocationError(error);
+  
+        alert(
+          `❌ ${message}\n\n💡 Puedes escribir tu dirección manualmente en el campo de texto.`
+        );
       },
       options
     );
   };
+  
 
   const handleClear = () => {
     setAddress("");
