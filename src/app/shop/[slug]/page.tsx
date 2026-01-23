@@ -76,7 +76,7 @@ export default async function ProductDetailPage({
         <div className="mb-6">
           <Link
             href="/shop"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800"
+            className="inline-flex items-center text-action hover:text-action/80"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Volver a la tienda

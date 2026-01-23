@@ -152,7 +152,7 @@ export default function CheckoutPage() {
           </p>
           <button
             onClick={() => router.push('/shop')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            className="bg-cta text-white px-6 py-3 rounded-lg hover:bg-cta/90 transition"
           >
             Ir a la Tienda
           </button>
@@ -176,7 +176,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CreditCard className="w-6 h-6 text-blue-600" />
+                <CreditCard className="w-6 h-6 text-action" />
                 Información de Envío
               </h2>
 
@@ -191,7 +191,7 @@ export default function CheckoutPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Juan Pérez"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                       errors.name ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="correo@ejemplo.com"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="5512345678"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                         errors.phone ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -269,7 +269,7 @@ export default function CheckoutPage() {
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="Calle Example #123, Col. Centro"
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all ${
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 transition-all ${
                       errors.address ? 'border-red-500' : 'border-gray-200'
                     }`}
                   />
@@ -286,7 +286,7 @@ export default function CheckoutPage() {
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="Ciudad de México"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                         errors.city ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -305,7 +305,7 @@ export default function CheckoutPage() {
                       value={formData.state}
                       onChange={handleChange}
                       placeholder="CDMX"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                         errors.state ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -325,7 +325,7 @@ export default function CheckoutPage() {
                       onChange={handleChange}
                       maxLength={5}
                       placeholder="06000"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400 ${
                         errors.zipCode ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -345,14 +345,14 @@ export default function CheckoutPage() {
                     onChange={handleChange}
                     rows={3}
                     placeholder="Instrucciones especiales de entrega..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-bold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  className="w-full bg-cta text-white py-4 rounded-lg hover:bg-cta/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   {loading ? (
                     <>
@@ -374,7 +374,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 sticky top-24 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <ShoppingCart className="w-6 h-6 text-blue-600" />
+                <ShoppingCart className="w-6 h-6 text-action" />
                 Resumen del Pedido
               </h2>
 
@@ -401,7 +401,7 @@ export default function CheckoutPage() {
                         <p className="text-xs text-gray-600">{item.variantDetails}</p>
                       )}
                       <p className="text-xs text-gray-600">Cantidad: {item.quantity}</p>
-                      <p className="text-sm font-semibold text-blue-600">
+                      <p className="text-sm font-semibold text-primary">
                         ${(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
@@ -431,7 +431,7 @@ export default function CheckoutPage() {
                 )}
                 <div className="border-t pt-2 flex justify-between">
                   <span className="text-lg font-bold text-gray-900">Total</span>
-                  <span className="text-lg font-bold text-blue-600">
+                  <span className="text-lg font-bold text-primary">
                     ${finalTotal.toFixed(2)} MXN
                   </span>
                 </div>

@@ -67,7 +67,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
       {/* Botón agregar al carrito */}
       <button
         onClick={handleAddToCart}
-        className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+        className="w-full bg-cta text-white py-4 px-6 rounded-lg font-semibold hover:bg-cta/90 transition-all duration-200 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg"
       >
         <ShoppingCart className="w-5 h-5" />
         <span>Agregar al carrito</span>

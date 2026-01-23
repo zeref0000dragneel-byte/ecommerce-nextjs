@@ -1,23 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Paleta de Colores Sunny Beach Day */
+  --color-primary: #264653; /* Azul oscuro - Confianza */
+  --color-action: #2A9D8F; /* Verde azulado - Acción */
+  --color-cta: #E76F51; /* Coral - Call To Action */
+  --color-background: #F8F9FA; /* Fondo de página */
+  --color-white: #FFFFFF; /* Blanco puro para cards */
+  --color-border: #E9ECEF; /* Borde sutil */
+  
+  /* Variables de Spacing */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 48px;
+  
+  /* Variables legacy para compatibilidad */
+  --background: var(--color-background);
+  --foreground: var(--color-primary);
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  font-family: 'Inter', sans-serif;
 }
 
 @layer utilities {
@@ -84,6 +94,15 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
 .animate-blob {
   animation: blob 7s infinite;
 }
@@ -114,8 +133,45 @@ body {
 }
 
 .hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilos Premium para Botones */
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-cta {
+  background-color: var(--color-cta);
+  color: white;
+}
+
+.btn-cta:hover {
+  background-color: #d45a3d;
+  box-shadow: 0 4px 12px rgba(231, 111, 81, 0.3);
+}
+
+/* Estilos Premium para Cards */
+.card-premium {
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: var(--color-white);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Gradientes modernos */
@@ -146,6 +202,13 @@ body {
 
 /* Mejoras de accesibilidad */
 *:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--color-action);
   outline-offset: 2px;
+}
+
+/* Precios con estilo premium */
+.price-premium {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
 }

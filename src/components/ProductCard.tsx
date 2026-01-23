@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, Eye } from "lucide-react";
+import { ShoppingCart, Eye } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useState } from "react";
 
@@ -37,129 +37,109 @@ export default function ProductCard({
 
   return (
     <div
-      className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden hover-lift"
+      className="group relative bg-white rounded-[16px] border border-[#E9ECEF] shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Imagen con overlay */}
-      <div className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+      {/* Contenedor de Imagen con Relación de Aspecto Premium */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-[#F8F9FA]">
         <Link href={`/shop/${slug}`} className="block w-full h-full">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt={name}
               fill
-              className={`object-cover transition-transform duration-500 ${
+              className={`object-cover transition-transform duration-700 ease-out ${
                 isHovered ? "scale-110" : "scale-100"
               }`}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 100vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <ShoppingCart className="w-16 h-16" />
+            <div className="w-full h-full flex items-center justify-center text-gray-300">
+              <ShoppingCart className="w-12 h-12" />
             </div>
           )}
         </Link>
         
-        {/* Overlay en hover */}
-        {imageUrl && (
-          <div
-            className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 transition-opacity duration-300 pointer-events-none ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        )}
-        
-        {/* Botones de acción en hover */}
-        <div
-          className={`absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 pointer-events-none ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <Link
-            href={`/shop/${slug}`}
-            className="bg-white/90 backdrop-blur-sm p-3 rounded-full hover:bg-white transform hover:scale-110 transition-all duration-200 shadow-lg pointer-events-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Eye className="w-5 h-5 text-gray-800" />
-          </Link>
-          <button
-            onClick={handleAddToCart}
-            disabled={stock === 0 || isAdding}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-110 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto"
-          >
-            {isAdding ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <ShoppingCart className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-
-        {/* Badge de stock */}
-        {stock === 0 ? (
-          <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse pointer-events-none">
-            Agotado
-          </div>
-        ) : stock <= 5 ? (
-          <div className="absolute top-3 right-3 bg-yellow-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg pointer-events-none">
-            ¡Últimas {stock}!
-          </div>
-        ) : (
-          <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            En Stock
-          </div>
-        )}
-      </div>
-
-      {/* Contenido */}
-      <div className="p-5">
-        <Link href={`/shop/${slug}`}>
-          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 min-h-[3.5rem]">
-            {name}
-          </h3>
-        </Link>
-
-        <div className="flex items-center justify-between mt-4">
-          <div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ${price.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+        {/* Badges de Disponibilidad */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none">
+          {stock === 0 ? (
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+              Agotado
             </span>
-            <p className="text-xs text-gray-500 mt-1">MXN</p>
-          </div>
-
-          {stock > 0 && (
-            <button
-              onClick={handleAddToCart}
-              disabled={isAdding}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed md:hidden lg:flex items-center gap-2"
-            >
-              {isAdding ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm font-semibold">Agregado</span>
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Agregar</span>
-                </>
-              )}
-            </button>
+          ) : stock <= 5 && (
+            <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+              Últimas {stock}
+            </span>
           )}
         </div>
 
-        {stock > 0 && (
-          <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            {stock} disponibles
-          </p>
-        )}
+        {/* Overlay de Acción Rápida */}
+        <div className={`absolute inset-0 bg-black/5 flex items-center justify-center transition-opacity duration-300 pointer-events-none ${isHovered ? "opacity-100" : "opacity-0"}`}>
+             <Link
+                href={`/shop/${slug}`}
+                className="bg-white text-[#264653] p-3 rounded-full shadow-xl hover:bg-[#264653] hover:text-white transition-colors duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
+              >
+                <Eye className="w-5 h-5" />
+              </Link>
+        </div>
       </div>
 
-      {/* Efecto de brillo en hover */}
-      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+      {/* Información del Producto */}
+      <div className="p-5">
+        <div className="mb-1">
+            <Link href={`/shop/${slug}`}>
+              <h2 className="text-lg font-bold text-[#264653] leading-tight line-clamp-2 h-[3rem] group-hover:text-[#2A9D8F] transition-colors">
+                {name}
+              </h2>
+            </Link>
+        </div>
+
+        {/* Precio y Indicador de Stock Realista */}
+        <div className="flex flex-col gap-1 mt-2">
+            <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-extrabold text-[#264653]">
+                    ${price.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                <span className="text-[10px] font-bold text-gray-400">MXN</span>
+            </div>
+            {stock > 0 && (
+                <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-[#2A9D8F] rounded-full animate-pulse"></span>
+                    <span className="text-[11px] text-gray-500 font-medium">{stock} disponibles</span>
+                </div>
+            )}
+        </div>
+
+        {/* Botón CTA (Call To Action) - Ancho completo para evitar cortes de texto */}
+        <div className="mt-5">
+            <button
+                onClick={handleAddToCart}
+                disabled={stock === 0 || isAdding}
+                className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
+                    isAdding 
+                    ? "bg-[#2A9D8F] text-white" 
+                    : "bg-[#E76F51] text-white hover:bg-[#d66244] active:scale-[0.98] shadow-[0_4px_14px_rgba(231,111,81,0.4)]"
+                } disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed`}
+            >
+                {isAdding ? (
+                    <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Agregando...</span>
+                    </>
+                ) : (
+                    <>
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>{stock === 0 ? "Agotado" : "Agregar al carrito"}</span>
+                    </>
+                )}
+            </button>
+        </div>
+      </div>
+
+      {/* Efecto de Brillo Sutil al pasar el mouse */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
       </div>
     </div>
   );

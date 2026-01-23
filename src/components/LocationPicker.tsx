@@ -256,13 +256,13 @@ export default function LocationPicker({
               </button>
             )}
           </div>
-          <button
-            type="button"
-            onClick={handleUseCurrentLocation}
-            disabled={isLoading}
-            className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            title="Usar mi ubicación actual"
-          >
+             <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              disabled={isLoading}
+              className="px-4 py-3 bg-action text-white rounded-xl hover:bg-action/90 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              title="Usar mi ubicación actual"
+            >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (

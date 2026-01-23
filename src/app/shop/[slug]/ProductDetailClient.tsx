@@ -114,7 +114,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           {/* Categoría */}
           <Link
             href={`/shop?category=${product.category.id}`}
-            className="inline-block text-sm text-blue-600 hover:text-blue-800 mb-2"
+            className="inline-block text-sm text-action hover:text-action/80 mb-2"
           >
             {product.category.name}
           </Link>
@@ -126,7 +126,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
           {/* Precio */}
           <div className="mb-6">
-            <span className="text-4xl font-bold text-blue-600">
+            <span className="text-4xl font-bold text-primary">
               ${currentPrice.toLocaleString("es-MX", {
                 minimumFractionDigits: 2,
               })}
@@ -157,7 +157,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                       onClick={() => variant && handleVariantClick(variant)}
                       className={`px-4 py-2 border-2 rounded-lg font-medium transition flex items-center gap-1 ${
                         isSelected
-                          ? 'border-blue-600 bg-blue-50 text-blue-600'
+                          ? 'border-action bg-action/10 text-action'
                           : 'border-gray-300 hover:border-gray-400 text-gray-700'
                       }`}
                     >
@@ -283,7 +283,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               <button
                 onClick={handleAddToCart}
                 disabled={isAdding}
-                className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2 font-semibold"
+                className="flex-1 bg-cta text-white px-6 py-3 rounded-lg hover:bg-cta/90 transition disabled:opacity-50 flex items-center justify-center gap-2 font-semibold"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {isAdding ? 'Agregado!' : 'Agregar al Carrito'}
@@ -298,11 +298,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </h3>
             <ul className="space-y-2 text-sm text-gray-600">
               <li className="flex items-start">
-                <ShoppingCart className="w-4 h-4 mr-2 mt-0.5 text-blue-600" />
+                <ShoppingCart className="w-4 h-4 mr-2 mt-0.5 text-action" />
                 Envío gratuito en compras mayores a $500
               </li>
               <li className="flex items-start">
-                <Package className="w-4 h-4 mr-2 mt-0.5 text-blue-600" />
+                <Package className="w-4 h-4 mr-2 mt-0.5 text-action" />
                 Entrega estimada: 3-5 días hábiles
               </li>
             </ul>

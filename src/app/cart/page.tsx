@@ -23,8 +23,8 @@ export default function CartPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center max-w-md mx-auto">
             <div className="relative inline-block mb-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-2xl opacity-30"></div>
-              <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-full">
+              <div className="absolute inset-0 bg-cta rounded-full blur-2xl opacity-30"></div>
+              <div className="relative bg-cta p-6 rounded-full">
                 <ShoppingBag className="w-20 h-20 text-white" />
               </div>
             </div>
@@ -36,7 +36,7 @@ export default function CartPage() {
             </p>
             <Link
               href="/shop"
-              className="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="inline-flex items-center bg-cta text-white px-10 py-4 rounded-lg font-semibold hover:bg-cta/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <span>Explorar Productos</span>
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -94,7 +94,7 @@ export default function CartPage() {
                 <div className="flex-1">
                   <Link
                     href={`/shop/${item.slug}`}
-                    className="text-xl font-bold text-gray-900 hover:text-blue-600 transition block mb-2"
+                    className="text-xl font-bold text-gray-900 hover:text-action transition block mb-2"
                   >
                     {item.name}
                   </Link>
@@ -109,7 +109,7 @@ export default function CartPage() {
                   )}
 
                   <div className="mb-4">
-                    <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <p className="text-3xl font-bold text-primary">
                       ${item.price.toLocaleString("es-MX", {
                         minimumFractionDigits: 2,
                       })}
@@ -183,7 +183,7 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 sticky top-24 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
+                <span className="bg-action p-2 rounded-lg">
                   <ShoppingBag className="w-5 h-5 text-white" />
                 </span>
                 Resumen del Pedido
@@ -219,10 +219,10 @@ export default function CartPage() {
                 )}
               </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6 border-2 border-blue-200">
+              <div className="bg-action/10 rounded-xl p-4 mb-6 border-2 border-action/20">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold text-gray-900">Total</span>
-                  <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="text-3xl font-bold text-primary">
                     ${finalTotal.toFixed(2)}
                   </span>
                 </div>
@@ -231,7 +231,7 @@ export default function CartPage() {
 
               <button
                 onClick={() => router.push("/checkout")}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 mb-3"
+                className="w-full bg-cta text-white py-4 rounded-lg hover:bg-cta/90 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mb-3"
               >
                 Proceder al Pago
               </button>

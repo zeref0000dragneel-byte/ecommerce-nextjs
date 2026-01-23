@@ -16,7 +16,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.mlstatic.com', // MercadoLibre
+        hostname: '**.mlstatic.com', // MercadoLibre (wildcard)
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // ✅ Unsplash (NUEVO)
       },
     ],
   },

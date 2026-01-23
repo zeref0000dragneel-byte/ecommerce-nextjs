@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma'; // ✅ CORRECTO: Usar singleton
+import { prisma } from '@/app/lib/prisma';
 
 // GET /api/products - Listar todos los productos
 export async function GET(request: Request) {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       slug,
       description,
       price,
-      comparePrice,
+      comparePrice, // ⚠️ Viene del frontend como "comparePrice"
       stock,
       imageUrl,
       categoryId,
@@ -63,9 +63,9 @@ export async function POST(request: Request) {
         slug,
         description,
         price: parseFloat(price),
-        comparePrice: comparePrice ? parseFloat(comparePrice) : null,
+        compareAtPrice: comparePrice ? parseFloat(comparePrice) : null, // ✅ CORRECTO
+        images: imageUrl ? [imageUrl] : [], // ✅ CORRECTO (array)
         stock: parseInt(stock) || 0,
-        imageUrl,
         categoryId,
       },
       include: {
