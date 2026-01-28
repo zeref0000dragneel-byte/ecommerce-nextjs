@@ -32,9 +32,9 @@ export async function POST(request: NextRequest) {
       resource_type: 'auto',
     });
 
+    // ✅ IMPORTANTE: Retornar "url" (no "secure_url")
     return NextResponse.json({
-      success: true,
-      url: result.secure_url,
+      url: result.secure_url, // ✅ El frontend espera "url"
     });
   } catch (error) {
     console.error('Error al subir imagen:', error);

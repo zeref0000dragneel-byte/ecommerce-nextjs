@@ -1,40 +1,29 @@
-import { prisma } from "@/app/lib/prisma";
-import { notFound } from "next/navigation";
-import Header from "@/components/Header";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import ProductDetailClient from "./ProductDetailClient";
-import type { Metadata } from "next";
+import { notFound } from 'next/navigation';
+import { prisma } from '@/app/lib/prisma';
+import ProductDetailClient from './ProductDetailClient';
+import Header from '@/components/Header';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
+async function getProduct(slug: string) {
   const product = await prisma.product.findUnique({
-    where: { slug },
-    include: { category: true },
+    where: { 
+      slug,
+      isActive: true 
+    },
+    include: {
+      category: true,
+      variants: {
+        where: { isActive: true },
+        orderBy: { createdAt: 'asc' }
+      }
+    }
   });
 
   if (!product) {
-    return {
-      title: "Producto no encontrado",
-    };
+    notFound();
   }
 
-  return {
-    title: product.name,
-    description: product.description || `Compra ${product.name} al mejor precio. ${product.description || ''}`,
-    openGraph: {
-      title: product.name,
-      description: product.description || undefined,
-      images: product.imageUrl ? [product.imageUrl] : [],
-    },
-  };
+  return product;
 }
-
-export const revalidate = 3600; // Revalidar cada hora
 
 export default async function ProductDetailPage({
   params,
@@ -42,50 +31,66 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  
-  const product = await prisma.product.findUnique({
-    where: { 
-      slug,
-      isActive: true, // Solo productos activos
-    },
-    include: {
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-      variants: {
-        where: { isActive: true },
-        orderBy: { createdAt: 'asc' },
-      },
-    },
-  });
+  const product = await getProduct(slug);
 
-  if (!product) {
-    notFound();
-  }
+  // ✅ Transformar el producto para que tenga imageUrl en vez de images
+  const transformedProduct = {
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    description: product.description,
+    price: product.price,
+    comparePrice: product.compareAtPrice, // ✅ Mapear compareAtPrice → comparePrice
+    stock: product.stock,
+    imageUrl: product.images && product.images.length > 0 ? product.images[0] : null, // ✅ Convertir array → string
+    category: {
+      id: product.category.id,
+      name: product.category.name,
+    },
+    variants: product.variants.map(variant => ({
+      id: variant.id,
+      color: variant.color,
+      size: variant.size,
+      sku: variant.sku,
+      price: variant.price,
+      stock: variant.stock,
+      imageUrl: variant.imageUrl,
+    })),
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
-
+      
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Link
-            href="/shop"
-            className="inline-flex items-center text-action hover:text-action/80"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Volver a la tienda
-          </Link>
-        </div>
-
-        {/* Componente cliente con lógica de variantes */}
-        <ProductDetailClient product={product} />
+        <ProductDetailClient product={transformedProduct} />
       </main>
     </div>
   );
+}
+
+// ✅ Generar metadata dinámica
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  
+  try {
+    const product = await getProduct(slug);
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : null;
+
+    return {
+      title: `${product.name} - Mi Tienda`,
+      description: product.description || `Compra ${product.name} en nuestra tienda`,
+      openGraph: imageUrl ? {
+        images: [imageUrl],
+      } : undefined,
+    };
+  } catch {
+    return {
+      title: 'Producto no encontrado - Mi Tienda',
+    };
+  }
 }

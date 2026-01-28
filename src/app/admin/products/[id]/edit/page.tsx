@@ -33,7 +33,7 @@ async function updateProduct(formData: FormData) {
   const price = parseFloat(formData.get('price') as string);
   const stock = parseInt(formData.get('stock') as string);
   const categoryId = formData.get('categoryId') as string;
-  const imageUrl = formData.get('imageUrl') as string;
+  const imageUrl = formData.get('imageUrl') as string | null;
 
   // Generar slug automáticamente desde el nombre
   const slug = name
@@ -43,6 +43,7 @@ async function updateProduct(formData: FormData) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
+  // ✅ CORRECTO: Usar relación anidada y array de images
   await prisma.product.update({
     where: { id },
     data: {
@@ -51,9 +52,12 @@ async function updateProduct(formData: FormData) {
       description,
       price,
       stock,
-      categoryId,
-      imageUrl: imageUrl || null,
-    },
+      category: {
+        connect: { id: categoryId }
+      },
+      // ✅ Usar images (array) en vez de imageUrl (string)
+      images: imageUrl && imageUrl.trim() !== '' ? [imageUrl] : [],
+    }
   });
 
   revalidatePath('/admin/products');
@@ -69,8 +73,11 @@ export default async function EditProductPage({
   const product = await getProduct(id);
   const categories = await getCategories();
 
+  // ✅ Obtener la primera imagen del array (o null si está vacío)
+  const currentImage = product.images && product.images.length > 0 ? product.images[0] : null;
+
   return (
-    <div className="max-w-6xl"> {/* ✅ Cambié max-w-3xl a max-w-6xl para más espacio */}
+    <div className="max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -92,9 +99,10 @@ export default async function EditProductPage({
       {/* Current Product Preview */}
       <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6 mb-8">
         <div className="flex items-center gap-4">
-          {product.imageUrl ? (
+          {/* ✅ CORREGIDO: Usar currentImage en vez de product.imageUrl */}
+          {currentImage ? (
             <img
-              src={product.imageUrl}
+              src={currentImage}
               alt={product.name}
               className="w-20 h-20 rounded-lg object-cover border-2 border-white shadow-md"
             />
@@ -120,7 +128,7 @@ export default async function EditProductPage({
       </div>
 
       {/* Form */}
-      <form action={updateProduct} className="bg-white rounded-lg shadow border border-gray-200 p-8 mb-8"> {/* ✅ Agregué mb-8 */}
+      <form action={updateProduct} className="bg-white rounded-lg shadow border border-gray-200 p-8 mb-8">
         <input type="hidden" name="id" value={product.id} />
         
         <div className="space-y-6">
@@ -231,7 +239,7 @@ export default async function EditProductPage({
               type="url"
               id="imageUrl"
               name="imageUrl"
-              defaultValue={product.imageUrl || ''}
+              defaultValue={currentImage ?? ''}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
               placeholder="https://ejemplo.com/imagen.jpg"
             />
@@ -258,7 +266,7 @@ export default async function EditProductPage({
         </div>
       </form>
 
-      {/* ✅ NUEVO: Gestor de Variantes */}
+      {/* ✅ Gestor de Variantes */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-8">
         <VariantsManager productId={product.id} basePrice={product.price} />
       </div>

@@ -41,7 +41,7 @@ export default function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Contenedor de Imagen con Relación de Aspecto Premium */}
+      {/* ✅ Contenedor de Imagen con position: relative */}
       <div className="relative aspect-[4/5] overflow-hidden bg-[#F8F9FA]">
         <Link href={`/shop/${slug}`} className="block w-full h-full">
           {imageUrl ? (

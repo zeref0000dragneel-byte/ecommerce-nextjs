@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Package, ShoppingCart, Check, X } from 'lucide-react';
+import { Package, ShoppingCart, X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 
 interface Variant {
@@ -36,7 +36,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const { addItem } = useCart();
   const hasVariants = product.variants && product.variants.length > 0;
   
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null); // ✅ Sin selección inicial
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -58,13 +58,10 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const currentStock = selectedVariant?.stock || product.stock;
   const currentImage = selectedVariant?.imageUrl || product.imageUrl;
 
-  // ✅ NUEVA FUNCIÓN: Toggle de variante (permite deseleccionar)
   const handleVariantClick = (variant: Variant) => {
     if (selectedVariant?.id === variant.id) {
-      // Si ya está seleccionada, deseleccionar
       setSelectedVariant(null);
     } else {
-      // Si no, seleccionar
       setSelectedVariant(variant);
     }
   };
@@ -91,7 +88,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
       <div className="grid md:grid-cols-2 gap-8 p-8">
-        {/* Imagen del producto */}
+        {/* ✅ Imagen del producto con position: relative */}
         <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
           {currentImage ? (
             <Image
@@ -140,7 +137,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             )}
           </div>
 
-          {/* Selector de Color (solo si hay variantes con color) */}
+          {/* Selector de Color */}
           {colors.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-900 mb-3">
@@ -175,7 +172,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* Selector de Talla (solo si hay variantes con talla) */}
+          {/* Selector de Talla */}
           {sizes.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-900 mb-3">
