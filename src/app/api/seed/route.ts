@@ -3,80 +3,63 @@ import { prisma } from '@/app/lib/prisma';
 
 export async function GET() {
   try {
-    const category = await prisma.category.create({
-      data: {
-        name: 'Electrónica',
-        slug: 'electronica',
-      },
+    // Obtener la categoría existente
+    let category = await prisma.category.findFirst({
+      where: { slug: 'electronica' }
     });
 
-    const product = await prisma.product.create({
-      data: {
-        name: 'Laptop HP Pavilion',
-        slug: 'laptop-hp-pavilion',
-        description: 'Laptop potente para programar',
-        price: 15999.99,
-        comparePrice: 18999.99,
-        stock: 10,
-        categoryId: category.id,
-        imageUrl: 'https://via.placeholder.com/400',
-      },
-    });
+    // Si no existe, crearla
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name: 'Electrónica', slug: 'electronica' }
+      });
+    }
 
-    const customer = await prisma.customer.create({
-      data: {
-        name: 'Juan Pérez',
-        email: 'juan@example.com',
-        phone: '5551234567',
-        address: 'Calle Falsa 123',
-        city: 'Oaxaca',
-        state: 'Oaxaca',
-        zipCode: '68000',
-      },
-    });
-
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: 'ORD-001',
-        total: 15999.99,
-        status: 'PAID',
-        paymentMethod: 'Tarjeta',
-        shippingAddress: 'Calle Falsa 123, Oaxaca',
-        customerId: customer.id,
-        items: {
-          create: [
-            {
-              quantity: 1,
-              price: 15999.99,
-              productId: product.id,
-            },
-          ],
+    // Crear productos variados
+    const products = await prisma.product.createMany({
+      data: [
+        {
+          name: 'Laptop Gaming Pro',
+          slug: 'laptop-gaming-pro',
+          description: 'Laptop potente para programar',
+          price: 15999.99,
+          compareAtPrice: 18999.99,
+          stock: 10,
+          categoryId: category.id,
+          images: ['https://via.placeholder.com/400'],
         },
-      },
-      include: {
-        customer: true,
-        items: {
-          include: {
-            product: true,
-          },
+        {
+          name: 'Monitor 4K',
+          slug: 'monitor-4k',
+          description: 'Monitor ultra HD',
+          price: 8999.99,
+          compareAtPrice: 10999.99,
+          stock: 20,
+          categoryId: category.id,
+          images: ['https://via.placeholder.com/400'],
         },
-      },
+        {
+          name: 'Teclado Mecánico',
+          slug: 'teclado-mecanico',
+          description: 'Teclado RGB',
+          price: 3999.99,
+          compareAtPrice: 4999.99,
+          stock: 30,
+          categoryId: category.id,
+          images: ['https://via.placeholder.com/400'],
+        },
+      ],
+      skipDuplicates: true,
     });
 
     return NextResponse.json({
       success: true,
-      message: '¡Datos de prueba creados exitosamente! 🎉',
-      data: {
-        category,
-        product,
-        customer,
-        order,
-      },
+      message: `${products.count} productos creados`,
     });
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
