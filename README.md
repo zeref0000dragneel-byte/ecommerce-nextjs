@@ -205,6 +205,7 @@ Este proyecto es de código abierto y está disponible bajo la licencia MIT.
 
 ---
 
-**Desarrollado por Gabriel Zeref** | 📧 tu@email.com | [LinkedIn](tu-linkedin) | [GitHub](tu-github)
+**Desarrollado por José Gabriel** | 📧 cuevasgutierrezjosegabriel@gmail.com
+| [LinkedIn](www.linkedin.com/in/josegabriel-dev) | [GitHub](https://github.com/zeref0000dragneel-byte)
 
 **Stack:** Next.js · React · TypeScript · Tailwind CSS · Vercel
