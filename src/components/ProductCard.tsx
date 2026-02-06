@@ -35,13 +35,21 @@ export default function ProductCard({
     setTimeout(() => setIsAdding(false), 1000);
   };
 
+  const handleWhatsAppRedirect = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const message = `Hola, me interesa el producto: ${name}\n\nPrecio: $${price.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN\n\n¿Está disponible?`;
+    window.open(`https://wa.me/5219516111552?text=${encodeURIComponent(message)}`, '_blank');
+  };
+  
+
   return (
     <div
       className="group relative bg-white rounded-[16px] border border-[#E9ECEF] shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* ✅ Contenedor de Imagen con position: relative */}
+      {/* Contenedor de Imagen con position: relative */}
       <div className="relative aspect-[4/5] overflow-hidden bg-[#F8F9FA]">
         <Link href={`/shop/${slug}`} className="block w-full h-full">
           {imageUrl ? (
@@ -60,7 +68,7 @@ export default function ProductCard({
             </div>
           )}
         </Link>
-        
+
         {/* Badges de Disponibilidad */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none">
           {stock === 0 ? (
@@ -76,64 +84,76 @@ export default function ProductCard({
 
         {/* Overlay de Acción Rápida */}
         <div className={`absolute inset-0 bg-black/5 flex items-center justify-center transition-opacity duration-300 pointer-events-none ${isHovered ? "opacity-100" : "opacity-0"}`}>
-             <Link
-                href={`/shop/${slug}`}
-                className="bg-white text-[#264653] p-3 rounded-full shadow-xl hover:bg-[#264653] hover:text-white transition-colors duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
-              >
-                <Eye className="w-5 h-5" />
-              </Link>
+          <Link
+            href={`/shop/${slug}`}
+            className="bg-white text-[#264653] p-3 rounded-full shadow-xl hover:bg-[#264653] hover:text-white transition-colors duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
+          >
+            <Eye className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 
       {/* Información del Producto */}
       <div className="p-5">
         <div className="mb-1">
-            <Link href={`/shop/${slug}`}>
-              <h2 className="text-lg font-bold text-[#264653] leading-tight line-clamp-2 h-[3rem] group-hover:text-[#2A9D8F] transition-colors">
-                {name}
-              </h2>
-            </Link>
+          <Link href={`/shop/${slug}`}>
+            <h2 className="text-lg font-bold text-[#264653] leading-tight line-clamp-2 h-[3rem] group-hover:text-[#2A9D8F] transition-colors">
+              {name}
+            </h2>
+          </Link>
         </div>
 
         {/* Precio y Indicador de Stock Realista */}
         <div className="flex flex-col gap-1 mt-2">
-            <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-extrabold text-[#264653]">
-                    ${price.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <span className="text-[10px] font-bold text-gray-400">MXN</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-extrabold text-[#264653]">
+              ${price.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+            <span className="text-[10px] font-bold text-gray-400">MXN</span>
+          </div>
+          {stock > 0 && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-[#2A9D8F] rounded-full animate-pulse"></span>
+              <span className="text-[11px] text-gray-500 font-medium">{stock} disponibles</span>
             </div>
-            {stock > 0 && (
-                <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-[#2A9D8F] rounded-full animate-pulse"></span>
-                    <span className="text-[11px] text-gray-500 font-medium">{stock} disponibles</span>
-                </div>
-            )}
+          )}
         </div>
 
-        {/* Botón CTA (Call To Action) - Ancho completo para evitar cortes de texto */}
-        <div className="mt-5">
-            <button
-                onClick={handleAddToCart}
-                disabled={stock === 0 || isAdding}
-                className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-                    isAdding 
-                    ? "bg-[#2A9D8F] text-white" 
-                    : "bg-[#E76F51] text-white hover:bg-[#d66244] active:scale-[0.98] shadow-[0_4px_14px_rgba(231,111,81,0.4)]"
-                } disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed`}
-            >
-                {isAdding ? (
-                    <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Agregando...</span>
-                    </>
-                ) : (
-                    <>
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>{stock === 0 ? "Agotado" : "Agregar al carrito"}</span>
-                    </>
-                )}
-            </button>
+        {/* Botones CTA (Call To Action) */}
+        <div className="mt-5 grid grid-cols-1 gap-2">
+          {/* Botón de WhatsApp */}
+          <button
+            onClick={handleWhatsAppRedirect}
+            className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 bg-[#25D366] text-white hover:bg-[#128C7E] shadow-[0_4px_14px_rgba(37,211,102,0.3)]"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l2.59-2.59L15 7l3.5 3.5-5.59 5.59z"/>
+            </svg>
+            <span>Hazlo Tuyo</span>
+          </button>
+
+          {/* Botón de Carrito (pequeño) */}
+          <button
+            onClick={handleAddToCart}
+            disabled={stock === 0 || isAdding}
+            className={`w-full py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
+              isAdding
+                ? "bg-[#2A9D8F] text-white"
+                : "bg-[#E76F51] text-white hover:bg-[#d66244] active:scale-[0.98] shadow-[0_4px_14px_rgba(231,111,81,0.4)]"
+            } disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed`}
+          >
+            {isAdding ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Agregando...</span>
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="w-4 h-4" />
+                <span>{stock === 0 ? "Agotado" : "Agregar"}</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 

@@ -35,7 +35,7 @@ interface Product {
 export default function ProductDetailClient({ product }: { product: Product }) {
   const { addItem } = useCart();
   const hasVariants = product.variants && product.variants.length > 0;
-  
+
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
@@ -46,7 +46,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         new Set(product.variants.filter((v) => v.color).map((v) => v.color))
       )
     : [];
-  
+
   const sizes = hasVariants
     ? Array.from(
         new Set(product.variants.filter((v) => v.size).map((v) => v.size))
@@ -68,7 +68,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
   const handleAddToCart = () => {
     setIsAdding(true);
-    
+
     addItem({
       id: product.id,
       name: product.name,
@@ -85,10 +85,19 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     setTimeout(() => setIsAdding(false), 1000);
   };
 
+  const handleWhatsAppRedirect = () => {
+    const variantDetails = selectedVariant
+      ? `, Variante: ${selectedVariant.color || ''}${selectedVariant.color && selectedVariant.size ? ' - ' : ''}${selectedVariant.size || ''}`.trim()
+      : '';
+    const message = `Hola, me interesa el producto: ${product.name}${variantDetails}\n\nPrecio: $${currentPrice.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN\nCantidad: ${quantity}\n\n¿Está disponible?`;
+    window.open(`https://wa.me/5219516111552?text=${encodeURIComponent(message)}`, '_blank');
+  };
+  
+
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
       <div className="grid md:grid-cols-2 gap-8 p-8">
-        {/* ✅ Imagen del producto con position: relative */}
+        {/* Imagen del producto */}
         <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
           {currentImage ? (
             <Image
@@ -147,7 +156,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 {colors.map((color) => {
                   const variant = product.variants.find((v) => v.color === color);
                   const isSelected = selectedVariant?.color === color;
-                  
+
                   return (
                     <button
                       key={color}
@@ -186,7 +195,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                       (!selectedVariant?.color || v.color === selectedVariant.color)
                   );
                   const isSelected = selectedVariant?.size === size;
-                  
+
                   return (
                     <button
                       key={size}
@@ -247,44 +256,58 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* Cantidad y Agregar al carrito */}
+          {/* Botones de acción */}
           {currentStock > 0 && (
-            <div className="flex gap-4 mb-8">
-              <div className="flex items-center border border-gray-300 rounded-lg">
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {/* Botón de WhatsApp */}
+              <button
+                onClick={handleWhatsAppRedirect}
+                className="bg-[#25D366] hover:bg-[#128C7E] text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l2.59-2.59L15 7l3.5 3.5-5.59 5.59z"/>
+                </svg>
+                Hazlo Tuyo
+              </button>
+
+              {/* Botón de Carrito */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center border border-gray-300 rounded-lg">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max={currentStock}
+                    value={quantity}
+                    onChange={(e) =>
+                      setQuantity(
+                        Math.min(currentStock, Math.max(1, parseInt(e.target.value) || 1))
+                      )
+                    }
+                    className="w-12 text-center border-x border-gray-300 py-2 text-gray-900"
+                  />
+                  <button
+                    onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                  onClick={handleAddToCart}
+                  disabled={isAdding}
+                  className="flex-1 bg-cta text-white px-4 py-3 rounded-lg hover:bg-cta/90 transition disabled:opacity-50 flex items-center justify-center gap-2 font-semibold"
                 >
-                  -
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  max={currentStock}
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(
-                      Math.min(currentStock, Math.max(1, parseInt(e.target.value) || 1))
-                    )
-                  }
-                  className="w-16 text-center border-x border-gray-300 py-2 text-gray-900"
-                />
-                <button
-                  onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100"
-                >
-                  +
+                  <ShoppingCart className="w-5 h-5" />
+                  {isAdding ? 'Agregado!' : 'Agregar'}
                 </button>
               </div>
-
-              <button
-                onClick={handleAddToCart}
-                disabled={isAdding}
-                className="flex-1 bg-cta text-white px-6 py-3 rounded-lg hover:bg-cta/90 transition disabled:opacity-50 flex items-center justify-center gap-2 font-semibold"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {isAdding ? 'Agregado!' : 'Agregar al Carrito'}
-              </button>
             </div>
           )}
 
@@ -296,11 +319,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             <ul className="space-y-2 text-sm text-gray-600">
               <li className="flex items-start">
                 <ShoppingCart className="w-4 h-4 mr-2 mt-0.5 text-action" />
-                Envío gratuito en compras mayores a $500
+                Entrega gratis en COBAO PL 42 ✨
               </li>
               <li className="flex items-start">
                 <Package className="w-4 h-4 mr-2 mt-0.5 text-action" />
-                Entrega estimada: 3-5 días hábiles
+                Entrega estimada: 2-3 días hábiles ⚡
               </li>
             </ul>
           </div>
