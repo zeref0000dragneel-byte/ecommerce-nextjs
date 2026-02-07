@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Zap } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -28,7 +29,6 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Redirigir a la página de admin
         router.push(redirect);
         router.refresh();
       } else {
@@ -42,22 +42,26 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary-dark via-[#1e3a47] to-action p-4">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,87,34,0.15)_0%,transparent_50%)]" />
+      <div className="relative max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border-2 border-white/10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Panel Admin</h1>
-          <p className="text-gray-600 mt-2">Iniciar sesión para continuar</p>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-coral mb-4 shadow-glow">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="font-title text-3xl font-bold tracking-wider text-secondary-dark">ONSET Admin</h1>
+          <p className="text-gray-600 mt-2 font-medium">Iniciar sesión para continuar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-accent-soft/20 border-2 border-accent-soft/40 text-accent-soft px-4 py-3 rounded-xl font-medium">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-bold text-secondary-dark mb-2">
               Usuario
             </label>
             <input
@@ -66,13 +70,13 @@ export default function AdminLoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
               placeholder="admin"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-bold text-secondary-dark mb-2">
               Contraseña
             </label>
             <input
@@ -81,7 +85,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
               placeholder="••••••••"
             />
           </div>
@@ -89,15 +93,15 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+            className="w-full bg-gradient-to-r from-primary to-coral text-white py-3 rounded-xl font-bold hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-blue-600 hover:text-blue-700 text-sm">
-            ← Volver a la tienda
+          <a href="/" className="text-primary hover:text-primary-dark text-sm font-bold transition-colors">
+            ← Volver a ONSET
           </a>
         </div>
       </div>

@@ -43,7 +43,7 @@ export async function POST(
       );
     }
 
-    // Verificar que el producto existe
+    // Verificar que el producto existe (las variantes pueden tener stock aunque el padre sea "sobre pedido")
     const product = await prisma.product.findUnique({
       where: { id },
     });
@@ -55,16 +55,20 @@ export async function POST(
       );
     }
 
-    // Crear la variante
+    const stockValue = typeof stock === 'number' ? stock : parseInt(String(stock), 10);
+    const validStock = !isNaN(stockValue) && stockValue >= 0 ? stockValue : 0;
+
+    // Crear la variante (siempre permitir stock independiente del producto padre)
     const variant = await prisma.productVariant.create({
       data: {
         productId: id,
         color: color || null,
         size: size || null,
         sku: sku || null,
-        price: price ? parseFloat(price) : null,
-        stock: stock ? parseInt(stock) : 0,
+        price: price != null && price !== '' ? parseFloat(String(price)) : null,
+        stock: validStock,
         imageUrl: imageUrl || null,
+        isActive: body.isActive !== false,
       },
     });
 

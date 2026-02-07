@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import VariantsManager from './VariantsManager';
+import AvailabilitySelector from './AvailabilitySelector';
 
 async function getProduct(id: string) {
   const product = await prisma.product.findUnique({
@@ -31,7 +32,10 @@ async function updateProduct(formData: FormData) {
   const name = formData.get('name') as string;
   const description = formData.get('description') as string;
   const price = parseFloat(formData.get('price') as string);
-  const stock = parseInt(formData.get('stock') as string);
+  const isPreOrder = formData.get('isPreOrder') === 'true';
+  const preOrderDays = (formData.get('preOrderDays') as string) || null;
+  const stockRaw = formData.get('stock') as string;
+  const stock = !isPreOrder && stockRaw ? parseInt(stockRaw) : null;
   const categoryId = formData.get('categoryId') as string;
   const imageUrl = formData.get('imageUrl') as string | null;
 
@@ -51,7 +55,9 @@ async function updateProduct(formData: FormData) {
       slug,
       description,
       price,
-      stock,
+      stock: isPreOrder ? null : stock,
+      isPreOrder,
+      preOrderDays: isPreOrder ? (preOrderDays?.trim() || null) : null,
       category: {
         connect: { id: categoryId }
       },
@@ -121,8 +127,14 @@ export default async function EditProductPage({
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600">Stock actual</p>
-            <p className="text-2xl font-bold text-purple-700">{product.stock}</p>
+            <p className="text-sm text-gray-600">
+              {product.isPreOrder ? 'Disponibilidad' : 'Stock actual'}
+            </p>
+            <p className="text-2xl font-bold text-purple-700">
+              {product.isPreOrder
+                ? `⏳ Sobre pedido${product.preOrderDays ? ` (${product.preOrderDays})` : ''}`
+                : product.stock ?? 0}
+            </p>
           </div>
         </div>
       </div>
@@ -164,50 +176,36 @@ export default async function EditProductPage({
             />
           </div>
 
-          {/* Price and Stock */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="price" className="block font-medium text-gray-700 mb-2">
-                Precio Base (MXN) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-2.5 text-gray-500 font-medium">$</span>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  required
-                  step="0.01"
-                  min="0"
-                  defaultValue={product.price}
-                  className="w-full pl-8 pr-4 py-2 border-2 border-gray-300 focus:border-blue-500 rounded-lg text-gray-900"
-                  placeholder="0.00"
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Las variantes pueden tener precios diferentes
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="stock" className="block font-medium text-gray-700 mb-2">
-                Stock Base (unidades) *
-              </label>
+          {/* Price */}
+          <div>
+            <label htmlFor="price" className="block font-medium text-gray-700 mb-2">
+              Precio Base (MXN) *
+            </label>
+            <div className="relative max-w-xs">
+              <span className="absolute left-4 top-2.5 text-gray-500 font-medium">$</span>
               <input
                 type="number"
-                id="stock"
-                name="stock"
+                id="price"
+                name="price"
                 required
+                step="0.01"
                 min="0"
-                defaultValue={product.stock}
-                className="w-full border-2 border-gray-300 focus:border-blue-500 rounded-lg px-4 py-2 text-gray-900"
-                placeholder="0"
+                defaultValue={product.price}
+                className="w-full pl-8 pr-4 py-2 border-2 border-gray-300 focus:border-blue-500 rounded-lg text-gray-900"
+                placeholder="0.00"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                El stock de variantes es independiente
-              </p>
             </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Las variantes pueden tener precios diferentes
+            </p>
           </div>
+
+          {/* Disponibilidad: Stock o Sobre pedido */}
+          <AvailabilitySelector
+            defaultIsPreOrder={product.isPreOrder}
+            defaultPreOrderDays={product.preOrderDays}
+            defaultStock={product.stock}
+          />
 
           {/* Category */}
           <div>

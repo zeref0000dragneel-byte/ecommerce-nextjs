@@ -1,29 +1,148 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: [
-      "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-      "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-      "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
-    theme: {
-      extend: {
-        colors: {
-          primary: '#264653', // Azul oscuro - Confianza
-          action: '#2A9D8F', // Verde azulado - Acción
-          cta: '#E76F51', // Coral - Call To Action
-          background: '#F8F9FA', // Fondo de página
-          border: '#E9ECEF', // Borde sutil
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      // ========================================
+      // PALETA ONSET – JUVENIL URBANO ENÉRGICO
+      // ========================================
+      colors: {
+        primary: {
+          DEFAULT: '#FF5722',
+          light: '#FF8A65',
+          dark: '#E64A19',
+          50: '#FBE9E7',
+          100: '#FFCCBC',
+          200: '#FFAB91',
+          300: '#FF8A65',
+          400: '#FF7043',
+          500: '#FF5722',
+          600: '#F4511E',
+          700: '#E64A19',
+          800: '#D84315',
+          900: '#BF360C',
         },
-        spacing: {
-          'xs': '8px',
-          'sm': '16px',
-          'md': '24px',
-          'lg': '48px',
+        action: {
+          DEFAULT: '#2A9D8F',
+          light: '#5BB5A9',
+          dark: '#1E7268',
+          50: '#E8F5F3',
+          100: '#C5E8E3',
+          200: '#9DD9D1',
+          300: '#75CABF',
+          400: '#4DBBAD',
+          500: '#2A9D8F',
+          600: '#248277',
+          700: '#1E7268',
+          800: '#186159',
+          900: '#12514A',
         },
-        fontFamily: {
-          sans: ['Inter', 'sans-serif'],
+        coral: {
+          DEFAULT: '#E76F51',
+          light: '#F4A261',
+          dark: '#D66244',
+        },
+        secondary: {
+          dark: '#264653',
+          salmon: '#F4A261',
+          yellow: '#FFD166',
+        },
+        accent: {
+          electric: '#00B4D8',
+          soft: '#FF6B6B',
+        },
+        cta: {
+          DEFAULT: '#FF5722',
+          light: '#FF8A65',
+          dark: '#E64A19',
+          50: '#FBE9E7',
+          100: '#FFCCBC',
+          200: '#FFAB91',
+          300: '#FF8A65',
+          400: '#FF7043',
+          500: '#FF5722',
+          600: '#F4511E',
+          700: '#E64A19',
+          800: '#D84315',
+          900: '#BF360C',
+        },
+        background: '#FFFFFF',
+        'bg-light': '#F8FAFC',
+        'bg-hover': '#FFF5F2',
+        border: '#E5E7EB',
+        success: '#2A9D8F',
+        error: '#FF6B6B',
+        info: '#00B4D8',
+        whatsapp: '#25D366',
+        warning: '#FFD166',
+      },
+      spacing: {
+        'xs': '8px',
+        'sm': '16px',
+        'md': '24px',
+        'lg': '48px',
+        'xl': '64px',
+        '2xl': '96px',
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'Inter', 'Open Sans', 'sans-serif'],
+        display: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        title: ['var(--font-bebas)', 'Bebas Neue', 'sans-serif'],
+      },
+      animation: {
+        'fadeIn': 'fadeIn 0.4s ease-out forwards',
+        'slideUp': 'slideUp 0.4s ease-out forwards',
+        'slideDown': 'slideDown 0.4s ease-out forwards',
+        'scaleIn': 'scaleIn 0.3s ease-out forwards',
+        'bounce-slow': 'bounce 2s infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 3s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 20px rgba(255, 87, 34, 0.3)' },
+          '100%': { boxShadow: '0 0 30px rgba(255, 87, 34, 0.5)' },
         },
       },
+      boxShadow: {
+        'soft': '0 2px 12px rgba(255, 87, 34, 0.08)',
+        'card': '0 4px 20px rgba(38, 70, 83, 0.12)',
+        'hover': '0 12px 32px rgba(255, 87, 34, 0.18)',
+        'float': '0 16px 40px rgba(42, 157, 143, 0.25)',
+        'glow': '0 0 24px rgba(255, 87, 34, 0.4)',
+        'neon': '0 0 20px rgba(0, 180, 216, 0.5)',
+      },
+      borderRadius: {
+        'card': '20px',
+        'button': '14px',
+        'badge': '9999px',
+      },
     },
-    plugins: [],
-  }
+  },
+  plugins: [],
+};

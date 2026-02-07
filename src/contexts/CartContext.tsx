@@ -12,6 +12,8 @@ export interface CartItem {
   stock: number;
   variantId?: string; // ✅ NUEVO: ID de la variante (opcional)
   variantDetails?: string; // ✅ NUEVO: Texto descriptivo "Rojo - M"
+  isPreOrder?: boolean; // Producto sobre pedido
+  preOrderDays?: string | null; // Días de entrega estimados
 }
 
 interface CartContextType {

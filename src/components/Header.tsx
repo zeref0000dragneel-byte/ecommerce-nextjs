@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/contexts/CartContext";
-import { ShoppingCart, Store, Package, Menu, X, Search } from "lucide-react";
+import { ShoppingCart, Package, Menu, X, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
@@ -21,7 +21,7 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Inicio", icon: Store },
+    { href: "/", label: "Inicio", icon: Zap },
     { href: "/shop", label: "Productos", icon: Package },
   ];
 
@@ -29,39 +29,39 @@ export default function Header() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-primary/98 backdrop-blur-md shadow-lg py-2"
-          : "bg-primary shadow-md py-0"
+          ? "bg-gradient-to-r from-secondary-dark via-[#1e3a47] to-secondary-dark/98 backdrop-blur-md shadow-xl py-2 border-b border-primary/20"
+          : "bg-gradient-to-r from-secondary-dark via-[#1e3a47] to-secondary-dark shadow-lg py-0"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex justify-between items-center transition-all duration-300 ${
-          isScrolled ? "h-16" : "h-20"
+          isScrolled ? "h-14" : "h-20"
         }`}>
-          {/* Logo */}
+          {/* Logo ONSET */}
           <Link
             href="/"
-            className="flex items-center space-x-3 group"
+            className="flex items-center gap-3 group"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-action rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-              <div className="relative bg-action p-2 rounded-lg">
-                <Store className="w-6 h-6 text-white" />
+              <div className="absolute inset-0 bg-primary rounded-xl blur-md opacity-80 group-hover:opacity-100 transition duration-300" />
+              <div className="relative bg-gradient-to-br from-primary to-coral p-2.5 rounded-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
+                <Zap className="w-6 h-6 text-white" />
               </div>
             </div>
             <div>
-              <span className={`text-2xl font-bold text-white transition-all duration-300 ${
-                isScrolled ? "text-xl" : "text-2xl"
-              }`}>
-                Mi Tienda
+              <span className={`font-title tracking-wider text-white transition-all duration-300 ${
+                isScrolled ? "text-2xl" : "text-3xl"
+              }`} style={{ letterSpacing: '0.15em' }}>
+                ONSET
               </span>
-              <p className="text-xs text-white/70 hidden sm:block">
-                Premium E-commerce
+              <p className="text-[10px] sm:text-xs text-primary/90 font-semibold uppercase tracking-widest hidden sm:block">
+                Tu estilo, tu inicio
               </p>
             </div>
           </Link>
 
           {/* Navegación Desktop */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -69,47 +69,41 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
                     isActive
-                      ? "bg-action text-white shadow-md"
+                      ? "bg-gradient-to-r from-primary to-coral text-white shadow-glow"
                       : "text-white/90 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="font-medium">{link.label}</span>
+                  <span>{link.label}</span>
                 </Link>
               );
             })}
           </nav>
 
           {/* Carrito y Menú Móvil */}
-          <div className="flex items-center space-x-4">
-            {/* Carrito */}
+          <div className="flex items-center gap-3">
             <Link
               href="/cart"
               className="relative group"
             >
-              <div className="relative p-2 rounded-lg bg-cta text-white hover:bg-cta/90 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+              <div className="relative p-2.5 rounded-xl bg-gradient-to-r from-primary to-coral text-white shadow-card hover:shadow-glow transition-all duration-300 transform hover:scale-105 active:scale-95">
                 <ShoppingCart className="w-5 h-5" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-0.5 -right-0.5 bg-accent-soft text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] flex items-center justify-center animate-pulse shadow-lg">
                     {totalItems > 99 ? "99+" : totalItems}
                   </span>
                 )}
               </div>
             </Link>
 
-            {/* Botón Menú Móvil */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+              className="md:hidden p-2.5 rounded-xl text-white hover:bg-white/10 transition-all duration-300"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -117,7 +111,7 @@ export default function Header() {
 
       {/* Menú Móvil */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-white/20 bg-primary animate-slideIn">
+        <div className="md:hidden border-t border-white/20 bg-secondary-dark/98 backdrop-blur-md animate-slideDown">
           <nav className="px-4 py-4 space-y-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -127,14 +121,14 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     isActive
-                      ? "bg-action text-white shadow-md"
+                      ? "bg-gradient-to-r from-primary to-coral text-white shadow-glow"
                       : "text-white/90 hover:bg-white/10"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium">{link.label}</span>
+                  <span>{link.label}</span>
                 </Link>
               );
             })}

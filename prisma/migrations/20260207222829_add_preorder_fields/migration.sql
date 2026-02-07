@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Product" ADD COLUMN     "isPreOrder" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "preOrderDays" TEXT,
+ALTER COLUMN "stock" DROP NOT NULL,
+ALTER COLUMN "stock" DROP DEFAULT;

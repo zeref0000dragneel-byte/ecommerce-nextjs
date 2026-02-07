@@ -16,6 +16,9 @@ export default function NewProductPage() {
     price: '',
     comparePrice: '',
     stock: '',
+    isPreOrder: false,
+    preOrderDaysStart: 3,
+    preOrderDaysEnd: 5,
     imageUrl: '',
     categoryId: '',
   });
@@ -93,17 +96,23 @@ export default function NewProductPage() {
     setLoading(true);
   
     try {
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price),
+        comparePrice: formData.comparePrice
+          ? parseFloat(formData.comparePrice)
+          : null,
+        stock: formData.isPreOrder ? null : parseInt(formData.stock) || 0,
+        isPreOrder: formData.isPreOrder,
+        preOrderDays: formData.isPreOrder
+          ? `${formData.preOrderDaysStart} a ${formData.preOrderDaysEnd} días`
+          : null,
+      };
+
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          comparePrice: formData.comparePrice
-            ? parseFloat(formData.comparePrice)
-            : null,
-          stock: parseInt(formData.stock),
-        }),
+        body: JSON.stringify(payload),
       });
   
       if (!response.ok) {
@@ -261,24 +270,145 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Stock */}
+        {/* Disponibilidad: Stock o Sobre pedido */}
         <div className="mb-4">
           <label className="block font-medium text-gray-700 mb-2">
-            Stock Base *
+            Disponibilidad
           </label>
-          <input
-            type="number"
-            name="stock"
-            required
-            min="0"
-            value={formData.stock}
-            onChange={handleInputChange}
-            className="w-full border-2 border-gray-300 focus:border-blue-500 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
-            placeholder="0"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            El stock de variantes es independiente
-          </p>
+          <div className="flex items-center gap-4 mb-3">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                checked={!formData.isPreOrder}
+                onChange={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isPreOrder: false,
+                    preOrderDaysStart: 3,
+                    preOrderDaysEnd: 5,
+                  }))
+                }
+                className="h-4 w-4 text-primary"
+              />
+              <span>Stock normal</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                checked={formData.isPreOrder}
+                onChange={() => setFormData((prev) => ({ ...prev, isPreOrder: true }))}
+                className="h-4 w-4 text-primary"
+              />
+              <span>Sobre pedido</span>
+            </label>
+          </div>
+
+          {formData.isPreOrder ? (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Días de entrega estimados
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden focus-within:border-blue-500">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        preOrderDaysStart: Math.max(1, prev.preOrderDaysStart - 1),
+                      }))
+                    }
+                    className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
+                  >
+                    ↓
+                  </button>
+                  <input
+                    type="number"
+                    min={1}
+                    value={formData.preOrderDaysStart}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        preOrderDaysStart: Math.max(1, parseInt(e.target.value) || 1),
+                      }))
+                    }
+                    className="w-12 text-center border-none focus:ring-0 py-1.5 text-gray-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, preOrderDaysStart: prev.preOrderDaysStart + 1 }))
+                    }
+                    className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
+                  >
+                    ↑
+                  </button>
+                </div>
+                <span className="text-gray-600 font-medium">a</span>
+                <div className="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden focus-within:border-blue-500">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        preOrderDaysEnd: Math.max(
+                          prev.preOrderDaysStart + 1,
+                          prev.preOrderDaysEnd - 1
+                        ),
+                      }))
+                    }
+                    className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
+                  >
+                    ↓
+                  </button>
+                  <input
+                    type="number"
+                    min={formData.preOrderDaysStart + 1}
+                    value={formData.preOrderDaysEnd}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        preOrderDaysEnd: Math.max(
+                          prev.preOrderDaysStart + 1,
+                          parseInt(e.target.value) || prev.preOrderDaysStart + 1
+                        ),
+                      }))
+                    }
+                    className="w-12 text-center border-none focus:ring-0 py-1.5 text-gray-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, preOrderDaysEnd: prev.preOrderDaysEnd + 1 }))
+                    }
+                    className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
+                  >
+                    ↑
+                  </button>
+                </div>
+                <span className="text-gray-600 font-medium">días</span>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Stock Base *
+              </label>
+              <input
+                type="number"
+                name="stock"
+                required={!formData.isPreOrder}
+                min="0"
+                value={formData.stock}
+                onChange={handleInputChange}
+                className="w-full border-2 border-gray-300 focus:border-blue-500 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400"
+                placeholder="0"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                El stock de variantes es independiente
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Imagen */}

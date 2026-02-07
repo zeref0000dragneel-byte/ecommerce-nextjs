@@ -20,11 +20,11 @@ async function getProducts() {
 async function deleteProduct(formData: FormData) {
   'use server';
   const id = formData.get('id') as string;
-  
+
   await prisma.product.delete({
     where: { id },
   });
-  
+
   revalidatePath('/admin/products');
   redirect('/admin/products');
 }
@@ -34,15 +34,14 @@ export default async function ProductsPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Productos</h2>
-          <p className="font-medium text-gray-600 mt-2">Gestiona tu catálogo de productos</p>
+          <h2 className="font-title text-3xl font-bold tracking-wider text-secondary-dark">Productos</h2>
+          <p className="font-medium text-gray-600 mt-2">Gestiona el catálogo ONSET</p>
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/50"
+          className="flex items-center gap-2 bg-gradient-to-r from-primary to-coral text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-glow hover:shadow-hover hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary/50"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -51,38 +50,36 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      {/* Stats - Premium */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg hover:shadow-2xl p-8 border border-slate-200 border-t-4 border-t-blue-500 transition-all duration-300 hover:-translate-y-1">
-          <p className="font-medium text-gray-600">Total Productos</p>
-          <p className="text-4xl font-bold tracking-tighter text-gray-900 mt-2">{products.length}</p>
+        <div className="bg-white rounded-2xl shadow-soft hover:shadow-hover p-8 border-2 border-gray-100 border-t-4 border-t-primary transition-all duration-300 hover:-translate-y-1">
+          <p className="font-semibold text-gray-600">Total Productos</p>
+          <p className="font-title text-4xl tracking-tight text-secondary-dark mt-2">{products.length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-lg hover:shadow-2xl p-8 border border-slate-200 border-t-4 border-t-green-500 transition-all duration-300 hover:-translate-y-1">
-          <p className="font-medium text-gray-600">En Stock</p>
-          <p className="text-4xl font-bold tracking-tighter text-green-600 mt-2">
+        <div className="bg-white rounded-2xl shadow-soft hover:shadow-hover p-8 border-2 border-gray-100 border-t-4 border-t-action transition-all duration-300 hover:-translate-y-1">
+          <p className="font-semibold text-gray-600">En Stock</p>
+          <p className="font-title text-4xl tracking-tight text-action mt-2">
             {products.filter(p => p.stock > 0).length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow-lg hover:shadow-2xl p-8 border border-slate-200 border-t-4 border-t-red-500 transition-all duration-300 hover:-translate-y-1">
-          <p className="font-medium text-gray-600">Sin Stock</p>
-          <p className="text-4xl font-bold tracking-tighter text-red-600 mt-2">
+        <div className="bg-white rounded-2xl shadow-soft hover:shadow-hover p-8 border-2 border-gray-100 border-t-4 border-t-accent-soft transition-all duration-300 hover:-translate-y-1">
+          <p className="font-semibold text-gray-600">Sin Stock</p>
+          <p className="font-title text-4xl tracking-tight text-accent-soft mt-2">
             {products.filter(p => p.stock === 0).length}
           </p>
         </div>
       </div>
 
-      {/* Products Table - Premium */}
-      <div className="bg-white rounded-lg shadow-xl p-8 m-6 border border-slate-200 overflow-hidden transition-all duration-300">
+      <div className="bg-white rounded-2xl shadow-soft p-8 border-2 border-gray-100 overflow-hidden transition-all duration-300">
         {products.length === 0 ? (
           <div className="text-center py-12">
             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay productos</h3>
-            <p className="text-gray-600 mb-6">Comienza creando tu primer producto</p>
+            <h3 className="font-display text-lg font-bold text-secondary-dark mb-2">No hay productos</h3>
+            <p className="text-gray-600 mb-6">Crea tu primer producto</p>
             <Link
               href="/admin/products/new"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-coral text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:scale-105 shadow-glow"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -93,37 +90,24 @@ export default async function ProductsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
-              <thead className="bg-gradient-to-r from-slate-50 to-slate-100 font-semibold text-gray-700 border-b border-slate-200">
+              <thead className="bg-gradient-to-r from-gray-50 to-bg-light font-bold text-secondary-dark border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left">
-                    Producto
-                  </th>
-                  <th className="px-6 py-4 text-left">
-                    Categoría
-                  </th>
-                  <th className="px-6 py-4 text-left">
-                    Precio
-                  </th>
-                  <th className="px-6 py-4 text-left">
-                    Stock
-                  </th>
-                  <th className="px-6 py-4 text-left">
-                    Estado
-                  </th>
-                  <th className="px-6 py-4 text-right">
-                    Acciones
-                  </th>
+                  <th className="px-6 py-4 text-left">Producto</th>
+                  <th className="px-6 py-4 text-left">Categoría</th>
+                  <th className="px-6 py-4 text-left">Precio</th>
+                  <th className="px-6 py-4 text-left">Stock</th>
+                  <th className="px-6 py-4 text-left">Estado</th>
+                  <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => {
-                  // ✅ Obtener la primera imagen del array
                   const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
-                  
+
                   return (
                     <tr
                       key={product.id}
-                      className="border-b border-slate-200 transition-all duration-200 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 hover:shadow-md"
+                      className="border-b border-gray-100 transition-all duration-200 hover:bg-primary/5"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
@@ -131,43 +115,43 @@ export default async function ProductsPage() {
                             <img
                               src={productImage}
                               alt={product.name}
-                              className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-sm"
+                              className="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 shadow-soft"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
                               <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                             </div>
                           )}
                           <div>
-                            <p className="font-semibold text-gray-900">{product.name}</p>
+                            <p className="font-bold text-secondary-dark">{product.name}</p>
                             <p className="text-sm text-gray-500 line-clamp-1">{product.description}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-100 to-purple-50 text-purple-800 border border-purple-200/50">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-action/20 text-action-dark border border-action/30">
                           {product.category.name}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-bold text-secondary-dark">
                           ${product.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className={`font-semibold ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}>
+                        <p className={`font-bold ${product.stock > 10 ? 'text-action' : product.stock > 0 ? 'text-warning' : 'text-accent-soft'}`}>
                           {product.stock} unidades
                         </p>
                       </td>
                       <td className="px-6 py-4">
                         {product.stock > 0 ? (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-action/20 text-action-dark">
                             Disponible
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-accent-soft/20 text-accent-soft">
                             Agotado
                           </span>
                         )}
@@ -176,7 +160,7 @@ export default async function ProductsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/admin/products/${product.id}/edit`}
-                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:brightness-110 text-white px-3 py-1.5 rounded-md text-sm inline-flex items-center transition-all duration-200 shadow-md hover:scale-105 hover:shadow-lg"
+                            className="bg-gradient-to-r from-primary to-coral hover:brightness-110 text-white px-3 py-2 rounded-xl text-sm inline-flex items-center transition-all duration-300 shadow-soft hover:scale-105 font-bold"
                             title="Editar"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +171,7 @@ export default async function ProductsPage() {
                             <input type="hidden" name="id" value={product.id} />
                             <button
                               type="submit"
-                              className="bg-gradient-to-r from-red-500 to-red-600 hover:brightness-110 text-white px-3 py-1.5 rounded-md text-sm inline-flex items-center transition-all duration-200 shadow-md hover:scale-105 hover:shadow-lg"
+                              className="bg-gradient-to-r from-accent-soft to-red-500 hover:brightness-110 text-white px-3 py-2 rounded-xl text-sm inline-flex items-center transition-all duration-300 shadow-soft hover:scale-105 font-bold"
                               title="Eliminar"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

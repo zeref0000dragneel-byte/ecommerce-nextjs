@@ -45,6 +45,8 @@ export async function POST(request: Request) {
       price,
       comparePrice, // ⚠️ Viene del frontend como "comparePrice"
       stock,
+      isPreOrder,
+      preOrderDays,
       imageUrl,
       categoryId,
     } = body;
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const preOrder = Boolean(isPreOrder);
     const product = await prisma.product.create({
       data: {
         name,
@@ -65,7 +68,9 @@ export async function POST(request: Request) {
         price: parseFloat(price),
         compareAtPrice: comparePrice ? parseFloat(comparePrice) : null, // ✅ CORRECTO
         images: imageUrl ? [imageUrl] : [], // ✅ CORRECTO (array)
-        stock: parseInt(stock) || 0,
+        stock: preOrder ? null : (parseInt(stock) || 0),
+        isPreOrder: preOrder,
+        preOrderDays: preOrder ? (preOrderDays?.trim() || null) : null,
         categoryId,
       },
       include: {

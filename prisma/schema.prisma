@@ -35,7 +35,9 @@ model Product {
   price          Float
   compareAtPrice Float?   // ⚠️ Cambiado de "comparePrice"
   images         String[] // ⚠️ Cambiado de "imageUrl" (ahora es array)
-  stock          Int      @default(0)
+  stock          Int?     // Opcional si es "sobre pedido"
+  isPreOrder     Boolean  @default(false)  // ¿Es sobre pedido?
+  preOrderDays   String?  // "3 a 5 días" (texto libre)
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -151,4 +153,51 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+// ========================================
+// CONTABILIDAD – MODELOS AISLADOS (solo lectura de Product)
+// ========================================
+
+model AccountingExternalItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sales AccountingSale[]
+}
+
+model AccountingExpense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum AccountingSaleStatus {
+  pagado
+  parcial
+  pendiente
+}
+
+model AccountingSale {
+  id              String                  @id @default(cuid())
+  productId       String?                 // Referencia solo lectura (no FK a Product)
+  externalItemId  String?
+  externalItem    AccountingExternalItem? @relation(fields: [externalItemId], references: [id], onDelete: SetNull)
+  quantity        Int
+  amount          Float                   // Monto total de la venta
+  status          AccountingSaleStatus    @default(pagado)
+  clientName      String?
+  paymentDate     DateTime?               // Solo si parcial o pendiente
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([productId])
+  @@index([externalItemId])
+  @@index([status])
 }
