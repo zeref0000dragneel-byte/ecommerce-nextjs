@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        if (product.stock < item.quantity) {
+        if (product.stock !== null && product.stock < item.quantity) {
           return NextResponse.json(
             { error: `Stock insuficiente para ${product.name}` },
             { status: 400 }

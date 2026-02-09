@@ -1,0 +1,204 @@
+// ========================================
+// CONFIGURACIÓN INICIAL DE PRISMA
+// ========================================
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // ⚠️ Agregamos esto
+}
+
+// ========================================
+// MODELO 1: CATEGORÍAS
+// ========================================
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  products  Product[]
+}
+
+// ========================================
+// MODELO 2: PRODUCTOS
+// ========================================
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  price          Float
+  compareAtPrice Float?   // ⚠️ Cambiado de "comparePrice"
+  images         String[] // ⚠️ Cambiado de "imageUrl" (ahora es array)
+  stock          Int?     // Opcional si es "sobre pedido"
+  isPreOrder     Boolean  @default(false)  // ¿Es sobre pedido?
+  preOrderDays   String?  // "3 a 5 días" (texto libre)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relaciones
+  categoryId     String
+  category       Category @relation(fields: [categoryId], references: [id])
+  orderItems     OrderItem[]
+  variants       ProductVariant[]
+  accountingSales AccountingSale[] // Relación con ventas contables
+
+  @@index([categoryId])
+  @@index([slug])
+}
+
+// ========================================
+// MODELO 2.5: VARIANTES DE PRODUCTO
+// ========================================
+model ProductVariant {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  color      String?
+  size       String?
+  sku        String?  @unique
+  price      Float?
+  stock      Int      @default(0)
+  imageUrl   String?
+  isActive   Boolean  @default(true)
+
+  orderItems OrderItem[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([productId])
+  @@index([sku])
+}
+
+// ========================================
+// MODELO 3: CLIENTES
+// ========================================
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+// ========================================
+// MODELO 4: PEDIDOS/ÓRDENES
+// ========================================
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  total           Float
+  status          OrderStatus @default(PENDING)
+  paymentMethod   String?
+  paymentId       String?
+  shippingAddress String?
+  mercadoPagoId   String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([orderNumber])
+}
+
+// ========================================
+// MODELO 5: ITEMS DEL PEDIDO
+// ========================================
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([variantId])
+}
+
+// ========================================
+// ENUMERACIÓN: ESTADOS DE PEDIDO
+// ========================================
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// ========================================
+// CONTABILIDAD – MODELOS AISLADOS
+// ========================================
+model AccountingExternalItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sales AccountingSale[]
+}
+
+model AccountingExpense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum AccountingSaleStatus {
+  pagado
+  parcial
+  pendiente
+}
+
+model AccountingSale {
+  id              String                  @id @default(cuid())
+  productId       String?                 // Referencia a Product
+  product         Product?                @relation(fields: [productId], references: [id], onDelete: SetNull)
+  externalItemId  String?
+  externalItem    AccountingExternalItem?  @relation(fields: [externalItemId], references: [id], onDelete: SetNull)
+  quantity        Int
+  amount          Float                   // Monto total de la venta
+  status          AccountingSaleStatus    @default(pagado)
+  clientName      String?
+  paymentDate     DateTime?               // Solo si parcial o pendiente
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([productId])
+  @@index([externalItemId])
+  @@index([status])
+}

@@ -33,6 +33,7 @@ export default async function Home() {
   const productsWithImageUrl = products.map((product) => ({
     ...product,
     imageUrl: product.images && product.images.length > 0 ? product.images[0] : null,
+    stock: product.stock ?? 0, // Fix: convertir null a 0
   }));
 
   return (

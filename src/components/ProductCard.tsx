@@ -12,7 +12,7 @@ interface ProductCardProps {
   slug: string;
   price: number;
   imageUrl: string | null;
-  stock: number;
+  stock: number | null;
   isPreOrder?: boolean;
   preOrderDays?: string | null;
 }
@@ -31,7 +31,7 @@ export default function ProductCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
-  const isAvailable = isPreOrder || stock > 0;
+  const isAvailable = isPreOrder || (stock ?? 0) > 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ export default function ProductCard({
       slug,
       price,
       imageUrl,
-      stock: isPreOrder ? 999 : stock,
+      stock: isPreOrder ? 999 : (stock ?? 0),
       isPreOrder,
       preOrderDays,
     });
@@ -91,13 +91,13 @@ export default function ProductCard({
             <span className="bg-orange-500/90 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg">
               Sobre pedido
             </span>
-          ) : stock === 0 ? (
+          ) : (stock ?? 0) === 0 ? (
             <span className="bg-accent-soft text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg">
               Agotado
             </span>
-          ) : stock <= 5 ? (
+          ) : (stock ?? 0) <= 5 ? (
             <span className="bg-warning text-secondary-dark px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg">
-              Últimas {stock}
+              Últimas {(stock ?? 0)}
             </span>
           ) : null}
         </div>
@@ -135,10 +135,10 @@ export default function ProductCard({
                 Sobre pedido{preOrderDays ? ` (${preOrderDays})` : ''}
               </span>
             </div>
-          ) : stock > 0 ? (
+          ) : (stock ?? 0) > 0 ? (
             <div className="flex items-center gap-1.5 mb-3">
               <span className="w-1.5 h-1.5 bg-[#2A9D8F] rounded-full animate-pulse" />
-              <span className="text-[11px] text-gray-500 font-medium">{stock} disponibles</span>
+              <span className="text-[11px] text-gray-500 font-medium">{(stock ?? 0)} disponibles</span>
             </div>
           ) : null}
         </div>
