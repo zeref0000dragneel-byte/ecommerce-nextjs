@@ -58,13 +58,13 @@ export default async function ProductsPage() {
         <div className="bg-white rounded-2xl shadow-soft hover:shadow-hover p-8 border-2 border-gray-100 border-t-4 border-t-action transition-all duration-300 hover:-translate-y-1">
           <p className="font-semibold text-gray-600">En Stock</p>
           <p className="font-title text-4xl tracking-tight text-action mt-2">
-            {products.filter(p => (p.stock ?? 0) > 0).length}
+            {products.filter(p => p.stock !== null && p.stock > 0).length}
           </p>
         </div>
         <div className="bg-white rounded-2xl shadow-soft hover:shadow-hover p-8 border-2 border-gray-100 border-t-4 border-t-accent-soft transition-all duration-300 hover:-translate-y-1">
           <p className="font-semibold text-gray-600">Sin Stock</p>
           <p className="font-title text-4xl tracking-tight text-accent-soft mt-2">
-            {products.filter(p => (p.stock ?? 0) === 0).length}
+            {products.filter(p => p.stock !== null && p.stock === 0).length}
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default async function ProductsPage() {
               <tbody>
                 {products.map((product) => {
                   const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
-                  const stock = product.stock ?? 0;
+                  const stock = product.stock ?? 0; // Manejo seguro de stock null
 
                   return (
                     <tr
@@ -143,11 +143,19 @@ export default async function ProductsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <p className={`font-bold ${stock > 10 ? 'text-action' : stock > 0 ? 'text-warning' : 'text-accent-soft'}`}>
-                          {stock} unidades
+                          {product.isPreOrder ? (
+                            <span className="text-yellow-600">Sobre pedido</span>
+                          ) : (
+                            `${stock} unidades`
+                          )}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        {stock > 0 ? (
+                        {product.isPreOrder ? (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
+                            Sobre pedido ({product.preOrderDays})
+                          </span>
+                        ) : stock > 0 ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-action/20 text-action-dark">
                             Disponible
                           </span>
